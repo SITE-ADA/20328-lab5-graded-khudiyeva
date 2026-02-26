@@ -87,7 +87,6 @@ public class EventServiceImpl implements EventService {
         if (tag == null || tag.isBlank()) {
             return List.of();
         }
-
         return eventRepository.findAll().stream()
                 .filter(event -> event.getTags() != null && event.getTags().contains(tag))
                 .collect(Collectors.toList());
@@ -95,21 +94,40 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Event> getUpcomingEvents() {
-        return List.of();
+        return eventRepository.findAll().stream()
+                .filter(event -> event.getEventDateTime() != null && event.getEventDateTime().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Event> getEventsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
-        return List.of();
+        if (minPrice == null || maxPrice == null || minPrice.compareTo(maxPrice) > 0) {
+            return List.of();
+        }
+        return eventRepository.findAll().stream()
+                .filter(event -> event.getTicketPrice() != null &&
+                        event.getTicketPrice().compareTo(minPrice) >= 0 &&
+                        event.getTicketPrice().compareTo(maxPrice) <= 0)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Event> getEventsByDateRange(LocalDateTime start, LocalDateTime end) {
-        return List.of();
+        if (start == null || end == null || start.isAfter(end)) {
+            return List.of();
+        }
+        return eventRepository.findAll().stream()
+                .filter(event -> event.getEventDateTime() != null &&
+                        !event.getEventDateTime().isBefore(start) &&
+                        !event.getEventDateTime().isAfter(end))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Event updateEventPrice(UUID id, BigDecimal newPrice) {
-        return null;
+        return eventRepository.findById(id).map(event -> {
+            event.setTicketPrice(newPrice);
+            return eventRepository.save(event);
+        }).orElse(null);
     }
 }
