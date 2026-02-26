@@ -135,4 +135,19 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @PatchMapping("/{id}/price")
+    public ResponseEntity<Event> updatePrice(
+            @PathVariable UUID id,
+            @RequestParam BigDecimal price) {
+        try {
+            Event updatedEvent = eventService.updateEventPrice(id, price);
+            if (updatedEvent == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(updatedEvent);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
