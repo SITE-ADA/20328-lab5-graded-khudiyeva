@@ -113,7 +113,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<Event> getEventsByDateRange(LocalDateTime start, LocalDateTime end) {
-        // Edge case: handle nulls or if start is after end
         if (start == null || end == null || start.isAfter(end)) {
             return List.of();
         }
@@ -126,7 +125,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event updateEventPrice(UUID id, BigDecimal newPrice) {
-        return null;
+        return eventRepository.findById(id).map(event -> {
+            event.setTicketPrice(newPrice);
+            return eventRepository.save(event);
+        }).orElse(null);
     }
 
 }
