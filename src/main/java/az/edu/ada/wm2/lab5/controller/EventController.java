@@ -24,7 +24,6 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    // 1. CREATE - POST /api/events
     @PostMapping
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         try {
@@ -35,7 +34,6 @@ public class EventController {
         }
     }
 
-    // 2. LIST ALL - GET /api/events
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
         try {
@@ -46,7 +44,6 @@ public class EventController {
         }
     }
 
-    // 3. GET ONE BY ID - GET /api/events/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable UUID id) {
         try {
@@ -59,7 +56,6 @@ public class EventController {
         }
     }
 
-    // 4. REMOVE BY ID - DELETE /api/events/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable UUID id) {
         try {
@@ -72,7 +68,6 @@ public class EventController {
         }
     }
 
-    // 5. FULL UPDATE (PUT) - PUT /api/events/{id}
     @PutMapping("/{id}")
     public ResponseEntity<Event> updateEvent(@PathVariable UUID id, @RequestBody Event event) {
         try {
@@ -85,7 +80,6 @@ public class EventController {
         }
     }
 
-    // 6. PARTIAL UPDATE (PATCH) - PATCH /api/events/{id}
     @PatchMapping("/{id}")
     public ResponseEntity<Event> partialUpdateEvent(@PathVariable UUID id, @RequestBody Event partialEvent) {
         try {
@@ -98,4 +92,16 @@ public class EventController {
         }
     }
 
+
+    @GetMapping("/filter/date")
+    public ResponseEntity<List<Event>> filterByDate(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+        try {
+            List<Event> events = eventService.getEventsByDateRange(start, end);
+            return ResponseEntity.ok(events);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
