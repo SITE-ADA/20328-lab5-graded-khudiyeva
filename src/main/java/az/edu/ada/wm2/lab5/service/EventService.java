@@ -20,7 +20,6 @@ public interface EventService {
 
     Event partialUpdateEvent(UUID id, Event partialEvent);
 
-    // Custom methods
     List<Event> getEventsByTag(String tag);
 
     List<Event> getUpcomingEvents();
