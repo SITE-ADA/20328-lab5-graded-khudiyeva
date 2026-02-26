@@ -115,4 +115,14 @@ public class EventController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/filter/tag")
+    public ResponseEntity<List<Event>> filterByTag(@RequestParam String tag) {
+        try {
+            List<Event> events = eventService.getEventsByTag(tag);
+            return ResponseEntity.ok(events);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
